@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 import { Field, ErrorMessage, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import type { UserFormInterface } from './type';
@@ -96,7 +96,21 @@ const schema = yup.object({
     .max(100, 'Пароль должен содержать максимум 100 символов'),
 });
 
-const { errors } = useForm({ validationSchema: schema });
+const { errors, validate } = useForm({ validationSchema: schema });
+
+const errorValidate = ref('');
+
+const validateAll = async () => {
+  const res = await validate();
+  if (res.valid) {
+    return { valid: true };
+  }
+  errorValidate.value = errors.value;
+  emit('errorValidate', errorValidate.value);
+  return { valid: false, errors: errors.value };
+};
+
+defineExpose({ validateAll });
 
 watch(
   () => label.value,
@@ -143,6 +157,15 @@ watch(
     });
   }
 );
+
+onMounted(() => {
+  errors.value = errors.value || {};
+});
+
+const emit = defineEmits<{
+  (_e: 'addAccount'): void;
+  (_e: 'errorValidate', _payload: any): void;
+}>();
 </script>
 
 <style scoped lang="scss">

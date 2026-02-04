@@ -26,7 +26,6 @@ export const useFormStore = defineStore('formStore', () => {
   };
 
 
-
   watch(
     () => users.value,
     (newUsers) => {
@@ -37,6 +36,6 @@ export const useFormStore = defineStore('formStore', () => {
     { deep: true }
   );
 
-  return { users, addUser, removeUser, updateUser, checkFieldPassword };
+  return { users, addUser, removeUser, updateUser, checkFieldPassword, checkFieldError };
 },
 );

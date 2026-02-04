@@ -27,6 +27,7 @@
           :typeRecord="user.typeRecord"
           :login="user.login"
           :password="user.password"
+          ref="userForms"
         />
       </div>
     </main>
@@ -34,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import UserForm from './components/UserForm.vue';
 import { useFormStore } from './stores/useFormStore';
 
@@ -44,7 +45,18 @@ const countTabs = computed(() => {
   return store.checkFieldPassword ? 4 : 3;
 });
 
-const addNewAccount = () => {
+const userForms = ref([]);
+
+const addNewAccount = async () => {
+  const validators = userForms.value.map((field) =>
+    field && field.validateAll ? field.validateAll() : Promise.resolve({ valid: true })
+  );
+  const results = await Promise.all(validators);
+  const hasErrors = results.some((r) => r && r.valid === false);
+  if (hasErrors) {
+    return;
+  }
+
   store.addUser({
     id: Date.now(),
     label: [],
