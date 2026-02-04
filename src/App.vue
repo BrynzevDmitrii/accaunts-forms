@@ -38,6 +38,7 @@
 import { computed, ref } from 'vue';
 import UserForm from './components/UserForm.vue';
 import { useFormStore } from './stores/useFormStore';
+import type { UserFormInstance } from './components/type';
 
 const store = useFormStore();
 
@@ -48,11 +49,13 @@ const countTabs = computed(() => {
 const userForms = ref([]);
 
 const addNewAccount = async () => {
-  const validators = userForms.value.map((field) =>
+  console.log(userForms.value);
+
+  const validators = userForms.value.map((field: UserFormInstance) =>
     field && field.validateAll ? field.validateAll() : Promise.resolve({ valid: true })
   );
   const results = await Promise.all(validators);
-  const hasErrors = results.some((r) => r && r.valid === false);
+  const hasErrors = results.some((r: { valid: boolean }) => r && r.valid === false);
   if (hasErrors) {
     return;
   }

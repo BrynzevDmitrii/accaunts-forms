@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Field, ErrorMessage, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import type { UserFormInterface } from './type';
@@ -98,7 +98,7 @@ const schema = yup.object({
 
 const { errors, validate } = useForm({ validationSchema: schema });
 
-const errorValidate = ref('');
+const errorValidate = ref<Partial<Record<string, string | undefined>>>({});
 
 const validateAll = async () => {
   const res = await validate();
@@ -106,7 +106,6 @@ const validateAll = async () => {
     return { valid: true };
   }
   errorValidate.value = errors.value;
-  emit('errorValidate', errorValidate.value);
   return { valid: false, errors: errors.value };
 };
 
@@ -157,15 +156,6 @@ watch(
     });
   }
 );
-
-onMounted(() => {
-  errors.value = errors.value || {};
-});
-
-const emit = defineEmits<{
-  (_e: 'addAccount'): void;
-  (_e: 'errorValidate', _payload: any): void;
-}>();
 </script>
 
 <style scoped lang="scss">

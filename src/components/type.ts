@@ -2,6 +2,10 @@ type userLabel = {
   text: string;
 };
 
+export type UserFormInstance = {
+  validateAll?: () => Promise<{ valid: boolean }>;
+} | null;
+
 export interface UserFormInterface {
   id: number;
   label: userLabel[];
