@@ -9,7 +9,11 @@
     </header>
     <main>
       <div class="app-account__body">
-        <div class="app-account__body-labels" :style="{ 'grid-template-columns': `repeat(${countTabs}, 1fr)` }">
+        <div
+          v-if="store.users.length"
+          class="app-account__body-labels"
+          :style="{ 'grid-template-columns': `repeat(${countTabs}, 1fr)` }"
+        >
           <p>Метки:</p>
           <p>Тип записи:</p>
           <p>Логин:</p>
@@ -59,7 +63,7 @@ const addNewAccount = () => {
   gap: 2rem;
 
   &__notify {
-    font-wait: bold;
+    font-weight: bold;
   }
 
   &__header {
@@ -71,12 +75,16 @@ const addNewAccount = () => {
   }
 
   &__body-labels {
-    display: grid;
+    display: none;
     grid-template-rows: 1fr;
     margin-bottom: 1rem;
     grid-gap: 0.5rem;
     font-size: 1rem;
     color: grey;
+
+    @media (min-width: 744px) {
+      display: grid;
+    }
   }
 }
 </style>
