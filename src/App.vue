@@ -49,8 +49,6 @@ const countTabs = computed(() => {
 const userForms = ref([]);
 
 const addNewAccount = async () => {
-  console.log(userForms.value);
-
   const validators = userForms.value.map((field: UserFormInstance) =>
     field && field.validateAll ? field.validateAll() : Promise.resolve({ valid: true })
   );
