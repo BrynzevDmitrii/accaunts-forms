@@ -157,15 +157,6 @@ watch(
     });
   }
 );
-
-onMounted(() => {
-  errors.value = errors.value || {};
-});
-
-const emit = defineEmits<{
-  (_e: 'addAccount'): void;
-  (_e: 'errorValidate', _payload: any): void;
-}>();
 </script>
 
 <style scoped lang="scss">

@@ -36,6 +36,6 @@ export const useFormStore = defineStore('formStore', () => {
     { deep: true }
   );
 
-  return { users, addUser, removeUser, updateUser, checkFieldPassword, checkFieldError };
+  return { users, addUser, removeUser, updateUser, checkFieldPassword };
 },
 );
