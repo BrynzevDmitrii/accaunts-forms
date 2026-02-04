@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Field, ErrorMessage, useForm } from 'vee-validate';
 import * as yup from 'yup';
 import type { UserFormInterface } from './type';
@@ -65,7 +65,11 @@ import { useFormStore } from '@/stores/useFormStore';
 
 const props = defineProps<UserFormInterface>();
 
-const label = ref(props.label);
+const labelValue = computed(() => {
+  return props.label.map((item) => item.text).join(';');
+});
+
+const label = ref(labelValue.value);
 const typeRecord = ref(props.typeRecord);
 const login = ref(props.login);
 const password = ref(props.password);
