@@ -97,10 +97,12 @@ const { errors } = useForm({ validationSchema: schema });
 watch(
   () => label.value,
   (newValue) => {
+    const labelSplit = (newValue as unknown as string).split(';');
+    const lableArray = labelSplit.map((item: string) => ({ text: item }));
     store.updateUser({
       id: props.id,
       filed: 'label',
-      value: newValue,
+      value: lableArray,
     });
   }
 );

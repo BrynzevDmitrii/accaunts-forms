@@ -43,7 +43,7 @@ const countTabs = computed(() => {
 const addNewAccount = () => {
   store.addUser({
     id: Date.now(),
-    label: '',
+    label: [],
     login: '',
     password: '',
     typeRecord: '',

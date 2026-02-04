@@ -8,9 +8,9 @@ export const useFormStore = defineStore('formStore', () => {
   const usersString = localStorage.getItem('users');
   users.value = usersString !== null ? JSON.parse(usersString) : [];
 
-  const addUser =(user: UserFormInterface)=> {
-    users.value.push(user);
-  }
+  const addUser = (user: UserFormInterface) => {
+  users.value.push(user);
+};
 
   const removeUser=(userId: number) => {
     return  users.value = users.value.filter((user) => user.id !== userId);
@@ -24,12 +24,11 @@ export const useFormStore = defineStore('formStore', () => {
   };
 
 
+
   watch(
     () => users.value,
     (newUsers) => {
       checkFieldPassword.value = newUsers.some((user) => user.typeRecord === 'local');
-      console.log( checkFieldPassword.value);
-
       localStorage.setItem('users', JSON.stringify(newUsers.map((user) => ({ ...user }))));
     },
     { deep: true }
