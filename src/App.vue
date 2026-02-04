@@ -3,13 +3,21 @@
     <header>
       <div class="app-account__header">
         <h1>Учетные записи</h1>
-        <button>+</button>
+        <button @click="addNewAccount">+</button>
       </div>
       <div class="app-account__notify">Для указания нескольких менток одной пары используйте разделитель ;</div>
     </header>
     <main>
       <div class="app-account__body">
-        <UserForm />
+        <UserForm
+          v-for="user in store.users"
+          :key="user.id"
+          :id="user.id"
+          :label="user.label"
+          :typeRecord="user.typeRecord"
+          :login="user.login"
+          :password="user.password"
+        />
       </div>
     </main>
   </div>
@@ -17,7 +25,19 @@
 
 <script setup lang="ts">
 import UserForm from './components/UserForm.vue';
-const props = 'wemwpew';
+import { useFormStore } from './stores/useFormStore';
+
+const store = useFormStore();
+
+const addNewAccount = () => {
+  store.addUser({
+    id: Date.now(),
+    label: '',
+    login: '',
+    password: '',
+    typeRecord: '',
+  });
+};
 </script>
 
 <style scoped lang="scss">

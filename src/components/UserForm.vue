@@ -2,7 +2,7 @@
   <div class="user-form">
     <h2>Форма учетной записи</h2>
 
-    <form @submit="onSubmit">
+    <form class="user-form__form">
       <div class="form-group">
         <label for="label">Метки:</label>
         <Field id="label" name="label" type="text" placeholder="Введите метки" v-model="label" />
@@ -20,9 +20,9 @@
       </div>
 
       <div class="form-group">
-        <label for="email">Логин:</label>
-        <Field id="email" name="login" type="login" placeholder="Введите логин" v-model="login" />
-        <ErrorMessage name="email" class="error-message" />
+        <label for="login">Логин:</label>
+        <Field id="login" name="login" type="login" placeholder="Введите логин" v-model="login" />
+        <ErrorMessage name="login" class="error-message" />
       </div>
 
       <div v-if="typeRecord === 'local'" class="form-group">
@@ -31,54 +31,134 @@
         <ErrorMessage name="password" class="error-message" />
       </div>
 
-      <button type="submit" :disabled="isSubmitting">
-        {{ isSubmitting ? 'Отправка...' : 'Сохранить' }}
+      <button @click="() => store.removeUser(props.id)">
+        {{ 'Удалить' }}
       </button>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Field, ErrorMessage, useForm } from 'vee-validate';
 import * as yup from 'yup';
+import type { UserFormInterface } from './type';
+import { useFormStore } from '@/stores/useFormStore';
 
-const label = ref('');
-const typeRecord = ref('');
-const login = ref('');
-const password = ref('');
+const props = defineProps<UserFormInterface>();
+
+const label = ref(props.label);
+const typeRecord = ref(props.typeRecord);
+const login = ref(props.login);
+const password = ref(props.password);
+
+const store = useFormStore();
 
 const schema = yup.object({
-  label: yup.string(),
+  label: yup.string().max(50, 'Метки должны содержать максимум 50 символов'),
 
   typeRecord: yup
     .string()
     .required('Тип записи обязателен для выбора')
     .oneOf(['ldap', 'local'], 'Выберите корректный тип записи'),
 
-  email: yup.string().required('Email обязателен для заполнения').email('Введите корректный email адрес'),
+  login: yup
+    .string()
+    .required('Логин обязателен для локального типа')
+    .max(100, 'Логин должен содержать максимум 100 символов'),
 
   password: yup
     .string()
     .required('Пароль обязателен для локального типа')
-    .min(6, 'Пароль должен содержать минимум 6 символов'),
-
-  terms: yup.boolean().oneOf([true], 'Необходимо согласиться с условиями'),
+    .min(6, 'Пароль должен содержать минимум 6 символов')
+    .max(100, 'Пароль должен содержать максимум 100 символов'),
 });
 
-const { handleSubmit, isSubmitting } = useForm({
-  validationSchema: schema,
-});
+useForm({ validationSchema: schema });
 
-const onSubmit = handleSubmit(async (values) => {
-  const formData = {
-    ...values,
-    password: values.typeRecord === 'ldap' ? null : values.password,
-  };
+watch(
+  () => label.value,
+  (newValue) => {
+    store.updateUser({
+      id: props.id,
+      filed: 'label',
+      value: newValue,
+    });
+  }
+);
 
-  console.log('Форма отправлена:', formData);
-  alert('Форма успешно сохранена!');
-});
+watch(
+  () => typeRecord.value,
+  (newValue) => {
+    store.updateUser({
+      id: props.id,
+      filed: 'typeRecord',
+      value: newValue,
+    });
+  }
+);
+
+watch(
+  () => login.value,
+  (newValue) => {
+    store.updateUser({
+      id: props.id,
+      filed: 'login',
+      value: newValue,
+    });
+  }
+);
+
+watch(
+  () => password.value,
+  (newValue) => {
+    store.updateUser({
+      id: props.id,
+      filed: 'password',
+      value: newValue,
+    });
+  }
+);
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 0.8rem;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 1px solid red;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    outline: none;
+  }
+
+  input:invalid,
+  select:invalid,
+  textarea:invalid {
+    border: 1px solid red;
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+</style>
