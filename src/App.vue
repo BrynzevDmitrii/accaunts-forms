@@ -5,10 +5,16 @@
         <h1>Учетные записи</h1>
         <button @click="addNewAccount">+</button>
       </div>
-      <div class="app-account__notify">Для указания нескольких менток одной пары используйте разделитель ;</div>
+      <div class="app-account__notify">! Для указания нескольких менток одной пары используйте разделитель ;</div>
     </header>
     <main>
       <div class="app-account__body">
+        <div class="app-account__body-labels" :style="{ 'grid-template-columns': `repeat(${countTabs}, 1fr)` }">
+          <p>Метки:</p>
+          <p>Тип записи:</p>
+          <p>Логин:</p>
+          <p v-if="countTabs === 4">Пароль:</p>
+        </div>
         <UserForm
           v-for="user in store.users"
           :key="user.id"
@@ -24,10 +30,15 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import UserForm from './components/UserForm.vue';
 import { useFormStore } from './stores/useFormStore';
 
 const store = useFormStore();
+
+const countTabs = computed(() => {
+  return store.checkFieldPassword ? 4 : 3;
+});
 
 const addNewAccount = () => {
   store.addUser({
@@ -47,12 +58,25 @@ const addNewAccount = () => {
   flex-direction: column;
   gap: 2rem;
 
+  &__notify {
+    font-wait: bold;
+  }
+
   &__header {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 1rem;
     font-size: 2rem;
+  }
+
+  &__body-labels {
+    display: grid;
+    grid-template-rows: 1fr;
+    margin-bottom: 1rem;
+    grid-gap: 0.5rem;
+    font-size: 1rem;
+    color: grey;
   }
 }
 </style>

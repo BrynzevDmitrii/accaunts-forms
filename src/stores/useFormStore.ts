@@ -1,9 +1,10 @@
 import type { UserFormInterface, updatedFieldInterface } from '@/components/type';
 import { defineStore } from 'pinia';
-import {  ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 export const useFormStore = defineStore('formStore', () => {
   const users = ref<UserFormInterface[]>([]);
+  const checkFieldPassword = ref(false);
   const usersString = localStorage.getItem('users');
   users.value = usersString !== null ? JSON.parse(usersString) : [];
 
@@ -16,22 +17,24 @@ export const useFormStore = defineStore('formStore', () => {
   };
 
   const updateUser =(updatedUser: updatedFieldInterface) => {
-
     const user = users.value.find((user) => user.id === updatedUser.id);
     if (user && updatedUser && updatedUser.filed && updatedUser.value) {
-      users.value[updatedUser.filed] = updatedUser.value;
+      user[updatedUser.filed] = updatedUser.value;
     }
   };
+
 
   watch(
     () => users.value,
     (newUsers) => {
-      localStorage.setItem('users', JSON.stringify(newUsers));
-      console.log(newUsers);
+      checkFieldPassword.value = newUsers.some((user) => user.typeRecord === 'local');
+      console.log( checkFieldPassword.value);
+
+      localStorage.setItem('users', JSON.stringify(newUsers.map((user) => ({ ...user }))));
     },
     { deep: true }
   );
 
-  return { users, addUser, removeUser, updateUser };
+  return { users, addUser, removeUser, updateUser, checkFieldPassword };
 },
 );
